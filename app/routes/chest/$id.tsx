@@ -1,3 +1,11 @@
+import { LoaderFunction } from '@remix-run/server-runtime';
+import { useLoaderData } from 'remix';
+
+export const loader: LoaderFunction = ({ params }) => {
+  const { id } = params;
+  return { id };
+};
 export default function ChestOfId() {
-  return <div></div>;
+  const { id } = useLoaderData();
+  return <div>{id}</div>;
 }
