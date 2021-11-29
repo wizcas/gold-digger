@@ -1,12 +1,12 @@
 import { Link, useLoaderData } from 'remix';
-import { getChests } from '~/services/chest';
+import { ChestAbstract, getChests } from '~/services/chest';
 
 export const loader = async () => {
   return getChests();
 };
 
 export default function ChestIndex() {
-  const chests = useLoaderData();
+  const chests = useLoaderData<ChestAbstract[]>();
   return (
     <div>
       <h2>Go find the chests!</h2>
