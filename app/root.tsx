@@ -10,19 +10,12 @@ import {
 } from 'remix';
 import type { LinksFunction } from 'remix';
 
-import globalStylesUrl from '~/styles/global.css';
-import darkStylesUrl from '~/styles/dark.css';
+import tailwindStyleUrl from '~/styles/tailwind.css';
+import classNames from 'classnames';
 
 // https://remix.run/api/app#links
 export let links: LinksFunction = () => {
-  return [
-    { rel: 'stylesheet', href: globalStylesUrl },
-    {
-      rel: 'stylesheet',
-      href: darkStylesUrl,
-      media: '(prefers-color-scheme: dark)',
-    },
-  ];
+  return [{ rel: 'stylesheet', href: tailwindStyleUrl }];
 };
 
 // https://remix.run/api/conventions#default-export
@@ -109,7 +102,7 @@ function Document({
         <Meta />
         <Links />
       </head>
-      <body>
+      <body className="bg-sky-900 text-gray-50">
         {children}
         <ScrollRestoration />
         <Scripts />
@@ -122,9 +115,15 @@ function Document({
 function Layout({ children }: { children: React.ReactNode }) {
   return (
     <div className="app">
-      <header>
+      <header
+        className={classNames(
+          'flex flex-row gap-4 items-center justify-center',
+          'p-4',
+          'bg-gray-800 bg-opacity-30'
+        )}
+      >
         <img src="/images/gold-pot.svg" width={32} height={32} />
-        私房钱大作战
+        <span className="font-bold text-lg">私房钱大作战</span>
       </header>
       <div className="container">{children}</div>
     </div>
