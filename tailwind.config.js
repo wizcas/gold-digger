@@ -1,7 +1,6 @@
 const colors = require('tailwindcss/colors');
 
 module.exports = {
-  mode: 'jit', // this will enable Tailwind JIT compiler to make the build faster
   purge: ['./app/**/*.{ts,tsx}'],
   darkMode: false, // or 'media' or 'class'
   theme: {
