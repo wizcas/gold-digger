@@ -1,4 +1,4 @@
-import type { MetaFunction } from 'remix';
+import { Link, MetaFunction } from 'remix';
 import { useLoaderData } from 'remix';
 
 // https://remix.run/api/conventions#meta
@@ -11,5 +11,12 @@ export let meta: MetaFunction = () => {
 
 // https://remix.run/guides/routing#index-routes
 export default function Index() {
-  return <div>Index</div>;
+  return (
+    <div>
+      <h2>Index</h2>
+      <div className="flex flex-col gap-4">
+        <Link to="/chest">Chest</Link>
+      </div>
+    </div>
+  );
 }

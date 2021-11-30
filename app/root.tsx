@@ -122,8 +122,13 @@ function Layout({ children }: { children: React.ReactNode }) {
           'bg-gray-800 bg-opacity-30'
         )}
       >
-        <img src="/images/gold-pot.svg" width={32} height={32} />
-        <span className="font-bold text-lg">私房钱大作战</span>
+        <Link
+          to="/"
+          className="flex flex-row gap-4 items-center justify-center"
+        >
+          <img src="/images/gold-pot.svg" width={32} height={32} />
+          <span className="font-bold text-lg">私房钱大作战</span>
+        </Link>
       </header>
       <div className="container">{children}</div>
     </div>
