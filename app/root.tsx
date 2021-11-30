@@ -102,7 +102,7 @@ function Document({
         <Meta />
         <Links />
       </head>
-      <body className="bg-sky-900 text-gray-50">
+      <body className="bg-blue-900 text-gray-50">
         {children}
         <ScrollRestoration />
         <Scripts />
