@@ -3,6 +3,8 @@ import dayjs from 'dayjs';
 import { useLoaderData } from 'remix';
 import invariant from 'tiny-invariant';
 import { Chest, getChest } from '~/services/chest';
+import { marked } from 'marked';
+import { useMemo } from 'react';
 
 export const loader: LoaderFunction = ({ params }) => {
   const { id } = params;
@@ -11,11 +13,11 @@ export const loader: LoaderFunction = ({ params }) => {
 };
 export default function ChestOfId() {
   const { markdown, amount, foundRecords } = useLoaderData<Chest>();
-  console.log(foundRecords);
+  const message = useMemo(() => ({ __html: marked(markdown) }), [marked]);
   return (
     <div>
       <div>{amount}</div>
-      <div>{markdown}</div>
+      <div dangerouslySetInnerHTML={message} />
       <div>
         <ul>
           {foundRecords.map((record) => (
