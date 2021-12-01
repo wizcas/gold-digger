@@ -13,9 +13,11 @@ export async function requestGraphCms<T = any, V = Variables>(
   headers?: HeadersInit
 ): Promise<T> {
   const url = process.env.GRAPHCMS_URL;
-  invariant(url);
+  const token = process.env.GRAPHCMS_TOKEN;
+  invariant(url, `GraphCMS URL is not found`);
+  invariant(token, `GraphCMS token is not found`);
   return request(url, document, variables, {
-    Authorization: `Bearer ${process.env.GRAPHCMS_TOKEN}`,
+    Authorization: `Bearer ${token}`,
     ...headers,
   });
 }

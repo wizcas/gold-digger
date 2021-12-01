@@ -11,7 +11,7 @@ import { DATETIME_FORMAT } from '~/helpers/datetime';
 
 export const loader: LoaderFunction = ({ params }) => {
   const { id } = params;
-  invariant(typeof id === 'string');
+  invariant(typeof id === 'string', 'Need chest ID');
   return getChest(id);
 };
 export default function ChestOfId() {
