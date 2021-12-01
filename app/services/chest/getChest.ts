@@ -1,27 +1,17 @@
-import dayjs, { Dayjs } from 'dayjs';
 import { gql } from 'graphql-request';
 import { requestGraphCms } from '~/helpers/graphcms';
+import type { FoundRecord } from './types';
 
-export interface FoundRecord {
-  id: string;
-  byId: string;
-  byName: string;
-  foundAt: Dayjs;
-}
 export interface Chest {
   id: string;
   amount: number;
   markdown: string;
-  foundRecords: FoundRecord[];
+  lastFoundAt?: string;
 }
 
-interface Response {
+interface Data {
   chest: { id: string; amount: number; message: { markdown: string } };
-  foundRecords: {
-    id: string;
-    finder: { id: string; name: string };
-    foundAt: string;
-  }[];
+  foundRecords: FoundRecord[];
 }
 
 const query = gql`
@@ -33,32 +23,20 @@ const query = gql`
         markdown
       }
     }
-    foundRecords(where: { chest: { id: $id } }) {
+    foundRecords(where: { chest: { id: $id } }, orderBy: foundAt_DESC) {
       id
-      finder {
-        id
-        name
-      }
       foundAt
     }
   }
 `;
 export async function getChest(id: string) {
-  const { chest, foundRecords } = await requestGraphCms<Response>(query, {
+  const { chest, foundRecords } = await requestGraphCms<Data>(query, {
     id,
   });
   return {
     id: chest.id,
     amount: chest.amount,
     markdown: chest.message.markdown || '',
-    foundRecords: foundRecords.map(
-      (record) =>
-        ({
-          id: record.id,
-          byId: record.finder.id,
-          byName: record.finder.name,
-          foundAt: dayjs(record.foundAt),
-        } as FoundRecord)
-    ),
+    lastFoundAt: foundRecords[0]?.foundAt,
   } as Chest;
 }

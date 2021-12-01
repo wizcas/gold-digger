@@ -2,6 +2,7 @@ import classNames from 'classnames';
 import dayjs from 'dayjs';
 import { Link, useLoaderData } from 'remix';
 import TextWithStroke from '~/components/TextWithStroke';
+import { DATETIME_FORMAT } from '~/helpers/datetime';
 import { ChestAbstract, getChests } from '~/services/chest';
 
 export const loader = async () => {
@@ -39,9 +40,9 @@ export default function ChestIndex() {
                   ￥{chest.amount}
                 </span>
                 <span className="text-center text-sm text-dark-secondary">
-                  {datetime.format('YYYY年M月D日')}
+                  {datetime.format(DATETIME_FORMAT.date)}
                   <br />
-                  {datetime.format('HH:mm:ss')}
+                  {datetime.format(DATETIME_FORMAT.time)}
                 </span>
               </Link>
             </li>
