@@ -102,7 +102,7 @@ function Document({
         <Meta />
         <Links />
       </head>
-      <body className="bg-blue-900 text-gray-50">
+      <body className="bg-primary-background text-light-normal">
         {children}
         <ScrollRestoration />
         <Scripts />
@@ -114,23 +114,25 @@ function Document({
 
 function Layout({ children }: { children: React.ReactNode }) {
   return (
-    <div className="app">
-      <header
-        className={classNames(
-          'flex flex-row gap-4 items-center justify-center',
-          'p-4',
-          'bg-gray-800 bg-opacity-30'
-        )}
-      >
-        <Link
-          to="/"
-          className="flex flex-row gap-4 items-center justify-center"
+    <div className="h-screen flex flex-col items-stretch">
+      <header className="w-full bg-primary-vivid">
+        <div
+          className={classNames(
+            'flex flex-row gap-4 items-center justify-center',
+            'p-4',
+            'container mx-auto'
+          )}
         >
-          <img src="/images/gold-pot.svg" width={32} height={32} />
-          <span className="font-bold text-lg">私房钱大作战</span>
-        </Link>
+          <Link
+            to="/"
+            className="flex flex-row gap-4 items-center justify-center"
+          >
+            <img src="/images/gold-pot.svg" width={32} height={32} />
+            <span className="font-bold text-lg">私房钱大作战</span>
+          </Link>
+        </div>
       </header>
-      <div className="container">{children}</div>
+      <div className="container mx-auto p-8 flex-1">{children}</div>
     </div>
   );
 }

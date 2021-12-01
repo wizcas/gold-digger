@@ -1,5 +1,7 @@
-import { Link, MetaFunction } from 'remix';
+import classNames from 'classnames';
+import { Link, MetaFunction, Outlet } from 'remix';
 import { useLoaderData } from 'remix';
+import Button from '~/components/Button';
 
 // https://remix.run/api/conventions#meta
 export let meta: MetaFunction = () => {
@@ -12,11 +14,15 @@ export let meta: MetaFunction = () => {
 // https://remix.run/guides/routing#index-routes
 export default function Index() {
   return (
-    <div>
-      <h2>Index</h2>
-      <div className="flex flex-col gap-4">
-        <Link to="/chest">Chest</Link>
-      </div>
+    <div className="h-full flex flex-col items-center justify-center">
+      <Button
+        className={classNames(
+          'bg-alipay-normal hover:bg-alipay-light active:bg-alipay-vivid',
+          'text-2xl'
+        )}
+      >
+        支付宝登录
+      </Button>
     </div>
   );
 }
