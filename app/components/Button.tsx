@@ -18,7 +18,7 @@ export default function Button({
         'bg-primary-normal hover:bg-primary-light active:bg-primary-vivid',
         'text-light-normal text-lg font-bold',
         'rounded-full',
-        'shadow-button active:shadow-button-sm active:mt-1',
+        'shadow-button transform active:shadow-button-sm active:translate-y-1',
         className
       )}
       {...rest}

@@ -1,7 +1,7 @@
 import classNames from 'classnames';
-import { Link, MetaFunction, Outlet } from 'remix';
-import { useLoaderData } from 'remix';
+import { MetaFunction, useNavigate } from 'remix';
 import Button from '~/components/Button';
+import Main from '~/components/Main';
 
 // https://remix.run/api/conventions#meta
 export let meta: MetaFunction = () => {
@@ -13,16 +13,23 @@ export let meta: MetaFunction = () => {
 
 // https://remix.run/guides/routing#index-routes
 export default function Index() {
+  const navigate = useNavigate();
+
+  function onLogin() {
+    navigate('/ready');
+  }
+
   return (
-    <div className="h-full flex flex-col items-center justify-center">
+    <Main>
       <Button
         className={classNames(
           'bg-alipay-normal hover:bg-alipay-light active:bg-alipay-vivid',
           'text-2xl'
         )}
+        onClick={onLogin}
       >
         支付宝登录
       </Button>
-    </div>
+    </Main>
   );
 }
