@@ -1,17 +1,27 @@
 import { gql } from 'graphql-request';
 import { requestGraphCms } from '~/helpers/graphcms';
+import type { FoundRecord } from './types';
 
 export interface ChestAbstract {
   id: string;
-  foundTimes: number;
+  amount: number;
+  lastFoundAt: string;
+}
+
+interface ChestData {
+  id: string;
+  amount: number;
+  foundRecords: FoundRecord[];
 }
 
 const query = gql`
   query getChests {
     chests {
       id
-      foundRecords {
+      amount
+      foundRecords(orderBy: foundAt_DESC) {
         id
+        foundAt
       }
     }
   }
@@ -19,13 +29,14 @@ const query = gql`
 
 export async function getChests() {
   const { chests } = await requestGraphCms<{
-    chests: [{ id: string; foundRecords: any[] }];
+    chests: ChestData[];
   }>(query);
   return chests.map(
     (chest) =>
       ({
         id: chest.id,
-        foundTimes: chest.foundRecords?.length,
+        amount: chest.amount,
+        lastFoundAt: chest.foundRecords[0]?.foundAt,
       } as ChestAbstract)
   );
 }

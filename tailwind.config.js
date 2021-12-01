@@ -18,6 +18,7 @@ module.exports = {
       red: colors.red,
       blue: colors.sky,
       yellow: colors.amber,
+      green: colors.teal,
       primary: {
         light: '#F04276',
         normal: '#D22D5E',
@@ -25,8 +26,6 @@ module.exports = {
         background: '#F8789E',
       },
       dark: {
-        // normal: '#414952',
-        // secondary:'#636978',
         normal: colors.coolGray[800],
         secondary: colors.coolGray[600],
       },

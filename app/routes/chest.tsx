@@ -1,10 +1,10 @@
 import { Outlet } from 'remix';
+import Main from '~/components/Main';
 
 export default function Chest() {
   return (
-    <div>
-      <h1>You found a gold chest!</h1>
+    <Main vertical="start">
       <Outlet />
-    </div>
+    </Main>
   );
 }
