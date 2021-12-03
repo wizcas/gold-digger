@@ -1,7 +1,12 @@
 import { useEffect, useRef } from 'react';
 import { ActionFunction, Form, redirect, useLocation } from 'remix';
 import Main from '~/components/Main';
-import { authorize, generateAuthSetCookies } from '~/services/alipay';
+import {
+  authorize,
+  generateAuthSetCookies,
+  getUserInfo,
+} from '~/services/alipay';
+import { Finder, registerFinder } from '~/services/finder';
 
 export const action: ActionFunction = async ({ request }) => {
   try {
@@ -10,6 +15,14 @@ export const action: ActionFunction = async ({ request }) => {
     const authCode = formData.get('authCode')?.toString() || '';
 
     const authData = await authorize(appId, authCode);
+    const userData = await getUserInfo(authData.accessToken);
+    const finder: Finder = {
+      openId: userData.userId,
+      name: userData.nickName,
+      avatar: userData.avatar,
+      gender: userData.gender,
+    };
+    await registerFinder(finder);
     return redirect('/ready', {
       headers: await generateAuthSetCookies(authData),
     });
