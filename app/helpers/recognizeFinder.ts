@@ -28,7 +28,7 @@ export async function recognize(request: Request) {
   console.log('logged in', result);
   if (result) {
     const userInfo = await getUserInfo(result.accessToken);
-    console.log('login user info', userInfo);
+    // console.log('login user info', userInfo);
     return {
       recognition: { finder: await getFinder(userInfo.userId) } as Recognition,
       headers: result.headers,

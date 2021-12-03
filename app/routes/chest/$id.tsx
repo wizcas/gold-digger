@@ -1,10 +1,14 @@
-import { LoaderFunction } from '@remix-run/server-runtime';
+import {
+  ActionFunction,
+  LoaderFunction,
+  redirect,
+} from '@remix-run/server-runtime';
 import dayjs from 'dayjs';
 import { useLoaderData, useNavigate } from 'remix';
 import invariant from 'tiny-invariant';
-import { Chest, getChest } from '~/services/chest';
+import { Chest, collectChest, getChest } from '~/services/chest';
 import { marked } from 'marked';
-import { useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import TextWithStroke from '~/components/TextWithStroke';
 import Button from '~/components/Button';
 import { DATETIME_FORMAT } from '~/helpers/datetime';
@@ -12,15 +16,40 @@ import { recognize } from '~/helpers/recognizeFinder';
 
 export const loader: LoaderFunction = async ({ params, request }) => {
   const { id } = params;
-  invariant(typeof id === 'string', 'Need chest ID');
+  invariant(id, 'Need chest ID');
   const { recognition } = (await recognize(request)) || {};
   const finderId = recognition?.finder?.id;
   return getChest(id, finderId);
 };
+
+export const action: ActionFunction = async ({ params, request }) => {
+  const { id: chestId } = params;
+  invariant(chestId, 'chest ID is empty');
+  const { recognition } = (await recognize(request)) || {};
+  const finderId = recognition?.finder?.id;
+  invariant(finderId, 'finder ID is empty');
+  await collectChest(chestId, finderId);
+  return null;
+};
+
 export default function ChestOfId() {
   const { markdown, amount, lastFoundAt } = useLoaderData<Chest>();
+  const isCollected = !!lastFoundAt;
   const navigate = useNavigate();
   const message = useMemo(() => ({ __html: marked(markdown) }), [marked]);
+
+  useEffect(() => {
+    async function collect() {
+      console.log('collect it!');
+      await fetch('', {
+        method: 'POST',
+      });
+    }
+    if (!isCollected) {
+      collect();
+    }
+  }, [isCollected]);
+
   const amountDisplay = (
     <h1 className="text-5xl font-bold text-yellow-200">￥{amount}</h1>
   );
@@ -72,5 +101,5 @@ export default function ChestOfId() {
       {cta}
     </>
   );
-  return lastFoundAt ? historical : newlyFound;
+  return isCollected ? historical : newlyFound;
 }

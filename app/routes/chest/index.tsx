@@ -9,10 +9,9 @@ import { getPeronalAchievement, PersonalAchievement } from '~/services/chest';
 
 export const loader: LoaderFunction = async ({ request }) => {
   const { recognition } = (await recognize(request)) || {};
-  const finder = recognition?.finder;
-  invariant(finder, 'finder is not recognized');
-  invariant(finder.id, 'finder id is empty');
-  return getPeronalAchievement(finder.id);
+  const finderId = recognition?.finder?.id;
+  invariant(finderId, 'finder ID is empty');
+  return getPeronalAchievement(finderId);
 };
 
 export default function ChestIndex() {
