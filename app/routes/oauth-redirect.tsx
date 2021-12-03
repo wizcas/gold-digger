@@ -1,34 +1,36 @@
-import { useEffect } from 'react';
-import { ActionFunction, json, LoaderFunction, useLocation } from 'remix';
+import { useEffect, useRef } from 'react';
+import { ActionFunction, Form, redirect, useLocation } from 'remix';
 import Main from '~/components/Main';
-import { alipayAccessToken, alipayRefreshToken } from '~/cookies';
-import { authorize } from '~/services/alipay';
-import { getUserInfo } from '~/services/alipay/getUserInfo';
+import {
+  authorize,
+  generateAuthSetCookies,
+  getUserInfo,
+} from '~/services/alipay';
+import { Finder, registerFinder } from '~/services/finder';
 
 export const action: ActionFunction = async ({ request }) => {
   try {
-    const { appId, authCode } = await request.json();
-    console.log('action data', { appId, authCode });
-    const authResult = await authorize(appId, authCode);
-    console.log(authResult);
-    const userInfo = await getUserInfo(authResult.accessToken);
-    console.log(userInfo);
+    const formData = await request.formData();
+    const appId = formData.get('appId')?.toString() || '';
+    const authCode = formData.get('authCode')?.toString() || '';
 
-    const cookies = [
-      await alipayAccessToken.serialize(authResult.accessToken, {
-        maxAge: authResult.expireIn,
-      }),
-      await alipayRefreshToken.serialize(authResult.refreshToken, {
-        maxAge: authResult.refreshExpireIn,
-      }),
-    ];
-
-    return json(userInfo, {
-      headers: cookies.map((cookie) => ['Set-Cookie', cookie]),
+    const authData = await authorize(appId, authCode);
+    const userData = await getUserInfo(authData.accessToken);
+    const finder: Finder = {
+      openId: userData.userId,
+      name: userData.nickName,
+      avatar: userData.avatar,
+      gender: userData.gender,
+    };
+    await registerFinder(finder);
+    return redirect('/ready', {
+      headers: await generateAuthSetCookies(authData),
     });
   } catch (e) {
-    console.error(e);
-    return null;
+    console.error('authorize failed', e);
+    return redirect('/', {
+      headers: await generateAuthSetCookies(null), // clear the auth cookies
+    });
   }
 };
 
@@ -39,17 +41,19 @@ export default function OAuthRedirect() {
   const appId = params.get('app_id');
   const authCode = params.get('auth_code');
 
-  const data = { appId, authCode };
+  const formRef = useRef<HTMLFormElement>(null);
 
   useEffect(() => {
-    fetch('', {
-      method: 'POST',
-      body: JSON.stringify(data),
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    });
+    formRef.current?.submit();
   }, []);
 
-  return <Main>登录中...</Main>;
+  return (
+    <Main>
+      <div>登录中...</div>
+      <Form method="post" ref={formRef}>
+        <input type="hidden" name="appId" value={appId || ''} />
+        <input type="hidden" name="authCode" value={authCode || ''} />
+      </Form>
+    </Main>
+  );
 }
