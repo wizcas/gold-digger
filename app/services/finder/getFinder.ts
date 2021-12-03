@@ -19,6 +19,6 @@ interface Data {
 }
 
 export async function getFinder(openId: string) {
-  const { finder } = await requestGraphCms<Data>(query, { openId });
-  return finder;
+  const data = await requestGraphCms<Data>(query, { openId });
+  return data.finder;
 }

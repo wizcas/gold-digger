@@ -3,6 +3,7 @@ import dayjs from 'dayjs';
 import { Link, useLoaderData } from 'remix';
 import TextWithStroke from '~/components/TextWithStroke';
 import { DATETIME_FORMAT } from '~/helpers/datetime';
+import { useRecognitionData } from '~/hooks/useRecognitionData';
 import { ChestAbstract, getChests } from '~/services/chest';
 
 export const loader = async () => {
@@ -11,6 +12,8 @@ export const loader = async () => {
 
 export default function ChestIndex() {
   const chests = useLoaderData<ChestAbstract[]>();
+  const { finder } = useRecognitionData();
+  console.log('chest index', finder);
   return (
     <>
       <img src="/images/treasure-deposit.svg" width={211} />

@@ -5,11 +5,20 @@ import {
   getUserInfo,
   refreshAuth,
 } from '~/services/alipay';
-import { getFinder } from '~/services/finder';
+import { Finder, getFinder } from '~/services/finder';
+
+export interface Recognition {
+  finder: Finder | null;
+}
+export function isRecognition(value: any): value is Recognition {
+  return typeof value === 'object' && (value.finder || value.find === null);
+}
 
 async function recognize(accessToken: string, headers?: HeadersInit) {
   const userInfo = await getUserInfo(accessToken);
-  return json(getFinder(userInfo.userId), { headers });
+  return json({ finder: await getFinder(userInfo.userId) } as Recognition, {
+    headers,
+  });
 }
 
 export const recognizeLoader: LoaderFunction = async ({ request }) => {

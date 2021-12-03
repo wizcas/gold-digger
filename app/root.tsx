@@ -7,11 +7,19 @@ import {
   Scripts,
   ScrollRestoration,
   useCatch,
+  useLoaderData,
 } from 'remix';
 import type { LinksFunction } from 'remix';
 
 import tailwindStyleUrl from '~/styles/tailwind.css';
 import classNames from 'classnames';
+import { Recognition } from './helpers/recognizeFinder';
+import {
+  RecognitionContext,
+  RecognitionProvider,
+} from './contexts/RecognitionContext';
+import { useContext } from 'react';
+import { useRecognitionData } from './hooks/useRecognitionData';
 
 // https://remix.run/api/app#links
 export let links: LinksFunction = () => {
@@ -103,7 +111,7 @@ function Document({
         <Links />
       </head>
       <body className="bg-primary-background text-light-normal">
-        {children}
+        <RecognitionProvider>{children}</RecognitionProvider>
         <ScrollRestoration />
         <Scripts />
         {process.env.NODE_ENV === 'development' && <LiveReload />}
@@ -113,23 +121,36 @@ function Document({
 }
 
 function Layout({ children }: { children: React.ReactNode }) {
+  const { finder } = useRecognitionData();
   return (
     <div className="h-screen flex flex-col items-stretch">
       <header className="w-full bg-primary-vivid">
         <div
           className={classNames(
-            'flex flex-row gap-4 items-center justify-center',
-            'p-4',
-            'container mx-auto'
+            'flex items-center justify-between',
+            'container mx-auto',
+            'p-4'
           )}
         >
-          <Link
-            to="/"
-            className="flex flex-row gap-4 items-center justify-center"
+          <div
+            className={classNames(
+              'flex flex-row gap-4 items-center justify-center'
+            )}
           >
-            <img src="/images/gold-pot.svg" width={32} height={32} />
-            <span className="font-bold text-lg">私房钱大作战</span>
-          </Link>
+            <Link
+              to="/"
+              className="flex flex-row gap-4 items-center justify-center"
+            >
+              <img src="/images/gold-pot.svg" width={32} height={32} />
+              <span className="font-bold text-lg">私房钱大作战</span>
+            </Link>
+          </div>
+          {finder && (
+            <div className="flex flex-row gap-2 items-center">
+              <img src={finder.avatar} width={32} className="rounded-md" />
+              <span className="font-bold">{finder.name}</span>
+            </div>
+          )}
         </div>
       </header>
       <div className="container mx-auto p-8 flex-1">{children}</div>
