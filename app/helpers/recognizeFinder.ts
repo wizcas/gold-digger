@@ -22,6 +22,7 @@ export const recognizeLoader: LoaderFunction = async ({ request }) => {
 
 export async function recognize(request: Request) {
   const result = await login(request);
+  console.log('logged in', result);
   if (result) {
     const userInfo = await getUserInfo(result.accessToken);
     return {
