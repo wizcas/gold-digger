@@ -13,11 +13,14 @@ export function isRecognition(value: any): value is Recognition {
 export const recognizeLoader: LoaderFunction = async ({ request }) => {
   const result = await recognize(request);
   if (result) {
+    console.log('<recognize loader> succeed: ', result);
     return json(result.recognition, { headers: result.headers });
   }
 
   const url = new URL(request.url);
-  return redirect(`/?next=${url.pathname}`);
+  const next = url.pathname;
+  console.log('login failed, next=', next);
+  return redirect(`/?next=${next}`);
 };
 
 export async function recognize(request: Request) {
@@ -25,6 +28,7 @@ export async function recognize(request: Request) {
   console.log('logged in', result);
   if (result) {
     const userInfo = await getUserInfo(result.accessToken);
+    console.log('login user info', userInfo);
     return {
       recognition: { finder: await getFinder(userInfo.userId) } as Recognition,
       headers: result.headers,
