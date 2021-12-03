@@ -28,5 +28,7 @@ export const recognizeLoader: LoaderFunction = async ({ request }) => {
     );
   }
 
-  return redirect(`/?next=${request.url}`);
+  const url = new URL(request.url);
+
+  return redirect(`/?next=${url.pathname}`);
 };

@@ -13,6 +13,7 @@ export const action: ActionFunction = async ({ request }) => {
     const formData = await request.formData();
     const appId = formData.get('appId')?.toString() || '';
     const authCode = formData.get('authCode')?.toString() || '';
+    const next = formData.get('next')?.toString() || '/ready';
 
     const authData = await authorize(appId, authCode);
     const userData = await getUserInfo(authData.accessToken);
@@ -23,7 +24,7 @@ export const action: ActionFunction = async ({ request }) => {
       gender: userData.gender,
     };
     await registerFinder(finder);
-    return redirect('/ready', {
+    return redirect(next, {
       headers: await generateAuthSetCookies(authData),
     });
   } catch (e) {
@@ -40,6 +41,9 @@ export default function OAuthRedirect() {
 
   const appId = params.get('app_id');
   const authCode = params.get('auth_code');
+  const next = params.get('state');
+
+  console.log({ next });
 
   const formRef = useRef<HTMLFormElement>(null);
 
@@ -53,6 +57,7 @@ export default function OAuthRedirect() {
       <Form method="post" ref={formRef}>
         <input type="hidden" name="appId" value={appId || ''} />
         <input type="hidden" name="authCode" value={authCode || ''} />
+        <input type="hidden" name="next" value={next || ''} />
       </Form>
     </Main>
   );

@@ -34,7 +34,7 @@ export const loader: LoaderFunction = async ({ request }) => {
     appId: process.env.ALIPAY_APP_ID,
     redirectUri: encodeURI('https://sfq.0x1c.dev/oauth-redirect'),
     scope: 'auth_base,auth_user',
-    // todo: return state for better security
+    state: new URL(request.url).searchParams.get('next'),
   });
 };
 
@@ -48,10 +48,10 @@ export let meta: MetaFunction = () => {
 
 // https://remix.run/guides/routing#index-routes
 export default function Index() {
-  const { appId, redirectUri, scope } = useLoaderData();
+  const { appId, redirectUri, scope, state } = useLoaderData();
 
   function onLogin() {
-    window.location.href = `https://openauth.alipay.com/oauth2/publicAppAuthorize.htm?app_id=${appId}&scope=${scope}&redirect_uri=${redirectUri}`;
+    window.location.href = `https://openauth.alipay.com/oauth2/publicAppAuthorize.htm?app_id=${appId}&scope=${scope}&redirect_uri=${redirectUri}&state=${state}`;
   }
 
   return (
