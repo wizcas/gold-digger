@@ -1,19 +1,22 @@
 import classNames from 'classnames';
 import dayjs from 'dayjs';
-import { Link, useLoaderData } from 'remix';
+import { Link, LoaderFunction, useLoaderData } from 'remix';
+import invariant from 'tiny-invariant';
 import TextWithStroke from '~/components/TextWithStroke';
 import { DATETIME_FORMAT } from '~/helpers/datetime';
-import { useRecognitionData } from '~/hooks/useRecognitionData';
-import { ChestAbstract, getChests } from '~/services/chest';
+import { recognize } from '~/helpers/recognizeFinder';
+import { getPeronalAchievement, PersonalAchievement } from '~/services/chest';
 
-export const loader = async () => {
-  return getChests();
+export const loader: LoaderFunction = async (args) => {
+  const { recognition } = (await recognize(args.request)) || {};
+  const finder = recognition?.finder;
+  invariant(finder, 'finder is not recognized');
+  invariant(finder.id, 'finder id is empty');
+  return getPeronalAchievement(finder.id);
 };
 
 export default function ChestIndex() {
-  const chests = useLoaderData<ChestAbstract[]>();
-  const { finder } = useRecognitionData();
-  console.log('chest index', finder);
+  const { records, totalAmount } = useLoaderData<PersonalAchievement>();
   return (
     <>
       <img src="/images/treasure-deposit.svg" width={211} />
@@ -24,14 +27,16 @@ export default function ChestIndex() {
       >
         已收缴
       </TextWithStroke>
-      <h1 className="text-5xl font-bold text-yellow-200">￥2888.88</h1>
+      <h1 className="text-5xl font-bold text-yellow-200">
+        ￥{totalAmount.toFixed(2)}
+      </h1>
       <ul className="w-full flex flex-col items-stretch gap-2">
-        {chests.map((chest) => {
-          const datetime = dayjs(chest.lastFoundAt);
+        {records.map((record) => {
+          const datetime = dayjs(record.foundAt);
           return (
-            <li key={chest.id}>
+            <li key={record.id}>
               <Link
-                to={chest.id}
+                to={record.id}
                 className={classNames(
                   'flex flex-row justify-between items-center',
                   'w-full p-2 rounded-lg',
@@ -40,7 +45,7 @@ export default function ChestIndex() {
                 )}
               >
                 <span className="text-2xl font-bold font-sans text-green-600">
-                  ￥{chest.amount}
+                  ￥{record.chestAmount}
                 </span>
                 <span className="text-center text-sm text-dark-secondary">
                   {datetime.format(DATETIME_FORMAT.date)}
