@@ -1,9 +1,35 @@
 import classNames from 'classnames';
-import { json, MetaFunction, useLoaderData, useNavigate } from 'remix';
+import { useEffect } from 'react';
+import {
+  json,
+  LoaderFunction,
+  MetaFunction,
+  redirect,
+  useLoaderData,
+  useNavigate,
+} from 'remix';
 import Button from '~/components/Button';
 import Main from '~/components/Main';
+import { alipayAccessToken, alipayRefreshToken } from '~/cookies';
+import { generateAuthSetCookies, refreshAuth } from '~/services/alipay';
 
-export const loader = () => {
+const AUTHORIZED_REDIRECT_ROUTE = '/ready';
+
+export const loader: LoaderFunction = async ({ request }) => {
+  const cookieHeader = request.headers.get('Cookie');
+  const accessToken = await alipayAccessToken.parse(cookieHeader);
+  if (accessToken) {
+    return redirect(AUTHORIZED_REDIRECT_ROUTE);
+  }
+
+  const refreshToken = await alipayRefreshToken.parse(cookieHeader);
+  if (refreshToken) {
+    const authData = await refreshAuth(refreshToken);
+    return redirect(AUTHORIZED_REDIRECT_ROUTE, {
+      headers: await generateAuthSetCookies(authData),
+    });
+  }
+
   return json({
     appId: process.env.ALIPAY_APP_ID,
     redirectUri: encodeURI('https://sfq.0x1c.dev/oauth-redirect'),
@@ -22,11 +48,9 @@ export let meta: MetaFunction = () => {
 
 // https://remix.run/guides/routing#index-routes
 export default function Index() {
-  const navigate = useNavigate();
   const { appId, redirectUri, scope } = useLoaderData();
 
   function onLogin() {
-    // navigate('/ready');
     window.location.href = `https://openauth.alipay.com/oauth2/publicAppAuthorize.htm?app_id=${appId}&scope=${scope}&redirect_uri=${redirectUri}`;
   }
 
