@@ -1,4 +1,5 @@
 import { gql } from 'graphql-request';
+import invariant from 'tiny-invariant';
 import { requestGraphCms } from '~/helpers/graphcms';
 import type { FoundRecord } from './types';
 
@@ -15,7 +16,7 @@ interface Data {
 }
 
 const query = gql`
-  query getChest($id: ID!) {
+  query getChestOfFinder($id: ID!, $finderId: ID!) {
     chest(where: { id: $id }) {
       id
       amount
@@ -23,16 +24,21 @@ const query = gql`
         markdown
       }
     }
-    foundRecords(where: { chest: { id: $id } }, orderBy: foundAt_DESC) {
+    foundRecords(
+      where: { chest: { id: $id }, finder: { id: $finderId } }
+      orderBy: foundAt_DESC
+    ) {
       id
       foundAt
     }
   }
 `;
-export async function getChest(id: string) {
+export async function getChest(id: string, finderId?: string) {
   const { chest, foundRecords } = await requestGraphCms<Data>(query, {
     id,
+    finderId,
   });
+  invariant(chest, `chest not found: ${id}`);
   return {
     id: chest.id,
     amount: chest.amount,

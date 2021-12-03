@@ -7,8 +7,8 @@ import { DATETIME_FORMAT } from '~/helpers/datetime';
 import { recognize } from '~/helpers/recognizeFinder';
 import { getPeronalAchievement, PersonalAchievement } from '~/services/chest';
 
-export const loader: LoaderFunction = async (args) => {
-  const { recognition } = (await recognize(args.request)) || {};
+export const loader: LoaderFunction = async ({ request }) => {
+  const { recognition } = (await recognize(request)) || {};
   const finder = recognition?.finder;
   invariant(finder, 'finder is not recognized');
   invariant(finder.id, 'finder id is empty');
@@ -25,7 +25,7 @@ export default function ChestIndex() {
         strokeColor="#6D68B7"
         className="text-5xl font-bold"
       >
-        已收缴
+        共收缴
       </TextWithStroke>
       <h1 className="text-5xl font-bold text-yellow-200">
         ￥{totalAmount.toFixed(2)}
@@ -36,7 +36,7 @@ export default function ChestIndex() {
           return (
             <li key={record.id}>
               <Link
-                to={record.id}
+                to={record.chestId}
                 className={classNames(
                   'flex flex-row justify-between items-center',
                   'w-full p-2 rounded-lg',

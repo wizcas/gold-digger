@@ -8,11 +8,14 @@ import { useMemo } from 'react';
 import TextWithStroke from '~/components/TextWithStroke';
 import Button from '~/components/Button';
 import { DATETIME_FORMAT } from '~/helpers/datetime';
+import { recognize } from '~/helpers/recognizeFinder';
 
-export const loader: LoaderFunction = ({ params }) => {
+export const loader: LoaderFunction = async ({ params, request }) => {
   const { id } = params;
   invariant(typeof id === 'string', 'Need chest ID');
-  return getChest(id);
+  const { recognition } = (await recognize(request)) || {};
+  const finderId = recognition?.finder?.id;
+  return getChest(id, finderId);
 };
 export default function ChestOfId() {
   const { markdown, amount, lastFoundAt } = useLoaderData<Chest>();
