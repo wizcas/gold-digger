@@ -1,11 +1,12 @@
 import classNames from 'classnames';
 import dayjs from 'dayjs';
-import { Link, LoaderFunction, useLoaderData } from 'remix';
+import { Link, LoaderFunction, useLoaderData, useTransition } from 'remix';
 import invariant from 'tiny-invariant';
 import TextWithStroke from '~/components/TextWithStroke';
 import { DATETIME_FORMAT } from '~/helpers/datetime';
 import { recognize } from '~/helpers/recognizeFinder';
 import { getPeronalAchievement, PersonalAchievement } from '~/services/chest';
+import BeatLoader from 'react-spinners/BeatLoader';
 
 export const loader: LoaderFunction = async ({ request }) => {
   const { recognition } = (await recognize(request)) || {};
@@ -16,6 +17,8 @@ export const loader: LoaderFunction = async ({ request }) => {
 
 export default function ChestIndex() {
   const { records, totalAmount } = useLoaderData<PersonalAchievement>();
+  const { state } = useTransition();
+  const loading = state !== 'idle';
   return (
     <>
       <img src="/images/treasure-deposit.svg" width={211} />
@@ -40,12 +43,16 @@ export default function ChestIndex() {
                   'flex flex-row justify-between items-center',
                   'w-full p-2 rounded-lg',
                   'bg-light-normal bg-opacity-50 hover:bg-light-secondary',
-                  'text-dark-normal'
+                  'text-dark-normal',
+                  {
+                    'bg-opacity-20': loading,
+                  }
                 )}
               >
                 <span className="text-2xl font-bold font-sans text-green-600">
                   ￥{record.chestAmount}
                 </span>
+                <BeatLoader loading={loading} color="#666" />
                 <span className="text-center text-sm text-dark-secondary">
                   {datetime.format(DATETIME_FORMAT.date)}
                   <br />

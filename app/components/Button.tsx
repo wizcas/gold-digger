@@ -1,5 +1,7 @@
 import classNames from 'classnames';
 import { ButtonHTMLAttributes } from 'react';
+import { useTransition } from 'remix';
+import BeatLoader from 'react-spinners/BeatLoader';
 
 interface Props extends ButtonHTMLAttributes<HTMLButtonElement> {}
 
@@ -9,6 +11,8 @@ export default function Button({
   type = 'button',
   ...rest
 }: Props) {
+  const t = useTransition();
+  const loading = t.state !== 'idle';
   return (
     <button
       type={type}
@@ -19,11 +23,13 @@ export default function Button({
         'text-light-normal text-lg font-bold',
         'rounded-full',
         'shadow-button transform active:shadow-button-sm active:translate-y-1',
+        'relative',
+        'transition-all duration-200 ease-in-out',
         className
       )}
       {...rest}
     >
-      {children}
+      {loading ? <BeatLoader loading color="currentColor" /> : children}
     </button>
   );
 }
