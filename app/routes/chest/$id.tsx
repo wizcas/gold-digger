@@ -1,7 +1,7 @@
 import {
   ActionFunction,
+  LinksFunction,
   LoaderFunction,
-  redirect,
 } from '@remix-run/server-runtime';
 import dayjs from 'dayjs';
 import { useLoaderData, useNavigate } from 'remix';
@@ -13,6 +13,7 @@ import TextWithStroke from '~/components/TextWithStroke';
 import Button from '~/components/Button';
 import { DATETIME_FORMAT } from '~/helpers/datetime';
 import { recognize } from '~/helpers/recognizeFinder';
+import markdownStyleUrl from '~/styles/markdown.css';
 
 export const loader: LoaderFunction = async ({ params, request }) => {
   const { id } = params;
@@ -31,6 +32,13 @@ export const action: ActionFunction = async ({ params, request }) => {
   await collectChest(chestId, finderId);
   return null;
 };
+
+export const links: LinksFunction = () => [
+  {
+    rel: 'stylesheet',
+    href: markdownStyleUrl,
+  },
+];
 
 export default function ChestOfId() {
   const { markdown, amount, lastFoundAt } = useLoaderData<Chest>();
@@ -59,7 +67,7 @@ export default function ChestOfId() {
   const renderedMessage = (
     <div
       dangerouslySetInnerHTML={message}
-      className="self-stretch rounded-3xl text-dark-normal bg-light-normal bg-opacity-50 p-8"
+      className="self-stretch rounded-3xl text-dark-normal bg-light-normal bg-opacity-50 p-8 markdown"
     />
   );
   const cta = <Button onClick={() => navigate('/chest')}>看看战绩</Button>;

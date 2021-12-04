@@ -1,0 +1,15 @@
+.markdown {
+  font-size: 1.5rem;
+  color: #414952;
+  text-align: center;
+}
+
+.markdown img {
+  border-radius: 0.5rem;
+  margin-top: 1rem;
+}
+
+.markdown blockquote {
+  background: url('/images/quote.svg') no-repeat border-box;
+  background-size: 2rem;
+}
