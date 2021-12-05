@@ -17,8 +17,7 @@ import { recognize } from '~/helpers/recognizeFinder';
 import markdownStyleUrl from '~/styles/markdown.css';
 
 export const loader: LoaderFunction = async ({ params, request }) => {
-  const { id } = params;
-  const chestId = id?.split(';')[0];
+  const { id: chestId } = params;
   console.group('chest id loader', chestId);
   invariant(chestId, 'Need chest ID');
   console.log('recognizing finder...');
