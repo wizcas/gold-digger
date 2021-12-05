@@ -18,14 +18,15 @@ import markdownStyleUrl from '~/styles/markdown.css';
 
 export const loader: LoaderFunction = async ({ params, request }) => {
   const { id } = params;
-  console.group('chest id loader', id);
-  invariant(id, 'Need chest ID');
+  const chestId = id?.split(';')[0];
+  console.group('chest id loader', chestId);
+  invariant(chestId, 'Need chest ID');
   console.log('recognizing finder...');
   const { recognition, headers } = (await recognize(request)) || {};
   const finderId = recognition?.finder?.id;
   console.log('finder recognized', finderId);
   console.log('loading chest...');
-  const chest = await getChest(id, finderId);
+  const chest = await getChest(chestId, finderId);
   console.log('chest loaded', chest);
   console.groupEnd();
   return json(chest, { headers });
